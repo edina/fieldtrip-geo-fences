@@ -33,4 +33,51 @@ DAMAGE.
 
 define(['records'], function(records){
 
+
+
+function onGeofenceEvent(event) {
+     console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+     alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+     }
+
+
+$(document).on(
+	'click',
+	'.geofence',
+         function(){
+ 	  console.log("register geofence") ;
+
+          var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
+           geofencing.register(params);
+         // Kittle yards
+           var gfparams = {"fid": 3, "radius": 100, "latitude": 55.935585 , "longitude": -3.179845};
+
+
+// register the application to get geofencing events in the onGeofenceEvent function
+
+            geofencing.addRegion(
+                function() {
+                    console.log("region added");
+                 },
+                 function(e) {
+                     alert(e);
+                  }, gfparams);
+
+           // Earthy
+           var gfparams2 = {"fid": 4, "radius": 100, "latitude": 55.934136 , "longitude": -3.178222};
+
+
+            geofencing.addRegion(
+                function() {
+                    console.log("region added");
+                 },
+                 function(e) {
+                     alert(e);
+                  }, gfparams2);
+
+
+
+	  });
 })
+
+
