@@ -78,6 +78,12 @@ $(document).on(
 
 
 	  });
+
+    // example annotate listener
+    $(document).on('click', '.annotate-audio-form', function(){
+        localStorage.setItem('annotate-form-type', 'audio');
+        $.mobile.changePage('annotate.html', {transition: "fade"});
+    });
 })
 
 
