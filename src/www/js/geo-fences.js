@@ -80,8 +80,8 @@ $(document).on(
 	  });
 
     // example annotate listener
-    $(document).on('click', '.annotate-audio-form', function(){
-        localStorage.setItem('annotate-form-type', 'audio');
+    $(document).on('click', '.annotate-image-form', function(){
+        localStorage.setItem('annotate-form-type', 'image');
         $.mobile.changePage('annotate.html', {transition: "fade"});
     });
 })
