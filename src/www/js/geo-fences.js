@@ -87,13 +87,22 @@ $(document).on(
 
     // TODO
     // this is here temporarily to test map switching
-    require(['records', 'utils'], function(records, utils){
+    require(['map', 'utils'], function(map, utils){
         $(document).on('change', '#settings-mapserver-url', function(){
             if(utils.isMobileDevice()){
-                map.switchBaseLayer(
-                    getMapWithLocalStorage(
-                        $('#settings-mapserver-url option:selected').val())
+                var url = "http://a.tiles.mapbox.com/v3/" +
+                    $('#settings-mapserver-url option:selected').val() +
+                    "/${z}/${x}/${y}.png";
+                var baseLayer = new OpenLayers.Layer.XYZ(
+                    "Map Box Layer",
+                    [url], {
+                        sphericalMercator: true,
+                        wrapDateLine: true,
+                        numZoomLevels: 17
+                    }
                 );
+
+                map.switchBaseLayer(baseLayer);
             }
             else{
                 utils.inform("Switching doesn't work on the desktop.");
