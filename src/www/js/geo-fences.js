@@ -86,8 +86,8 @@ $(document).on(
     });
 
     // TODO
-    // this is here temporarily to testing map switching
-    define(['records', 'utils'], function(records, utils){
+    // this is here temporarily to test map switching
+    require(['records', 'utils'], function(records, utils){
         $(document).on('change', '#settings-mapserver-url', function(){
             if(utils.isMobileDevice()){
                 map.switchBaseLayer(
