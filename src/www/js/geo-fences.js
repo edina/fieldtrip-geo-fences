@@ -84,6 +84,22 @@ $(document).on(
         localStorage.setItem('annotate-form-type', 'image');
         $.mobile.changePage('annotate.html', {transition: "fade"});
     });
+
+    // TODO
+    // this is here temporarily to testing map switching
+    define(['records', 'utils'], function(records, utils){
+        $(document).on('change', '#settings-mapserver-url', function(){
+            if(utils.isMobileDevice()){
+                map.switchBaseLayer(
+                    getMapWithLocalStorage(
+                        $('#settings-mapserver-url option:selected').val())
+                );
+            }
+            else{
+                utils.inform("Switching doesn't work on the desktop.");
+            }
+        });
+    });
 })
 
 
