@@ -69,6 +69,13 @@ var currentGeofenceAnnotation ;
           }) // ends #geo-fence-form submit
    
     }//ends geofencePage
+
+     function onGeofenceEvent(event) {
+       console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+        alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+     }
+
+
      var onSuccess = function(position){
  	        console.log("geofence getCurrentPosition:" + position.coords) ;
                   console.log("longitude:" + position.coords.longitude ) ;
