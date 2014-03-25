@@ -33,6 +33,9 @@ DAMAGE.
 
 define(['records', 'utils', 'map', 'ui'], function(records, utils, map, ui){
 
+var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
+geofencing.register(params);
+
 var currentGeofenceAnnotation ;
 
    var geofencePage = function()
@@ -70,10 +73,6 @@ var currentGeofenceAnnotation ;
    
     }//ends geofencePage
 
-     function onGeofenceEvent(event) {
-       console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-        alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-     }
 
 
      var onSuccess = function(position){
@@ -86,8 +85,7 @@ var currentGeofenceAnnotation ;
                        'lat': position.coords.latitude
                  } ;
           
-                var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
-                geofencing.register(params);
+
 
                  currentGeofenceAnnotation = {
                     'record':{
@@ -101,7 +99,7 @@ var currentGeofenceAnnotation ;
                             },
                             {
                                 'id': 'fieldcontain-geofence-duration-1',
-                                'val': 80000 ,
+                                'val': 180 * ,
                                 'label': 'Geofence Duration'
                             }
                         ],
@@ -177,4 +175,10 @@ var currentGeofenceAnnotation ;
 
 $(document).on('pageinit','#geofence-page', geofencePage) ;
 }); // ends define scope
+
+     function onGeofenceEvent(event) {
+       console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+        alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+     }
+
 
