@@ -127,13 +127,13 @@ var currentGeofenceAnnotation ;
                      console.log("error occurred adding geofence region") ;
                   }, gfparams);
 
-                $.mobile.changePage('map.html');
+                $.mobile.changePage('gps-capture.html');
 
             };  
 
        var onError = function(error) {
  	        console.log("GPS Timeout" + error) ;
-                $.mobile.changePage('map.html');
+                $.mobile.changePage('gps-capture.html');
        };  
 
 	  
