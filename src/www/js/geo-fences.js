@@ -99,7 +99,7 @@ var currentGeofenceAnnotation ;
                             },
                             {
                                 'id': 'fieldcontain-geofence-duration-1',
-                                'val': 180 * ,
+                                'val': 180 * 1000,
                                 'label': 'Geofence Duration'
                             }
                         ],
