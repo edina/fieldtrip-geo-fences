@@ -31,28 +31,92 @@ DAMAGE.
 
 "use strict";
 
-define(['records'], function(records){
+define(['records', 'utils', 'map', 'ui'], function(records, utils, map, ui){
+
+var currentGeofenceAnnotation ;
+
+   var geofencePage = function()
+   {
+     // listen on geofence activate  button
+
+      $('#geofence-form-ok').click($.proxy(function(event){
+            
+ 	    console.log("geofence activate button listener") ;
+            $('#geofence-form').submit();
+        }, this));
 
 
+        // form submitted
+        $('#geofence-form').submit(function(event){
+            if($('#geofence-form-title').val().length === 0){
+                $('#geofence-form-title').addClass('ui-focus');
+                utils.inform('Required field not populated');
+            }
+            else{
 
-function onGeofenceEvent(event) {
-     console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-     alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-     }
+ 	        console.log("geofence form submit: getCurrentPosition") ;
+                navigator.geolocation.getCurrentPosition(
+                onSuccess,
+                onError,
+                {
+		   enableHighAccuracy:true,
+                   maximumAge:0,
+                   timeout:5000 	
+                }) ;
+             }
+            return false ;
 
+          }) // ends #geo-fence-form submit
+   
+    }//ends geofencePage
+     var onSuccess = function(position){
+ 	        console.log("geofence getCurrentPosition:" + position.coords) ;
+                  console.log("longitude:" + position.coords.longitude ) ;
+                  console.log("latitude:" + position.coords.latitude ) ;
+                 
+                 var coords = {
+                       'lon': position.coords.longitude,
+                       'lat': position.coords.latitude
+                 } ;
+          
+                var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
+                geofencing.register(params);
 
-$(document).on(
-	'click',
-	'.geofence',
-         function(){
- 	  console.log("register geofence") ;
+                 currentGeofenceAnnotation = {
+                    'record':{
+                        'editor': 'geofence.edtr',
+                        'name': $('#geofence-form-title').val(),
+                        'fields': [
+                            {
+                                'id': 'fieldcontain-geofence-radius-1',
+                                'val': $('#geofence-form-radius').val() ,
+                                'label': 'Geofence Radius'
+                            },
+                            {
+                                'id': 'fieldcontain-geofence-duration-1',
+                                'val': 80000 ,
+                                'label': 'Geofence Duration'
+                            }
+                        ],
+                    },
+                    'isSynced': false,
+                };
 
-          var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
-           geofencing.register(params);
-         // Kittle yards
-           var gfparams = {"fid": 3, "radius": 100, "latitude": 55.935585 , "longitude": -3.179845};
+               var EXTERNAL_PROJECTION = new OpenLayers.Projection("EPSG:4326") ;
+               var INTERNAL_PROJECTION = new OpenLayers.Projection("EPSG:900913") ; 
+                // map.pointToExternal(coords) ;
+               var lonlat = new OpenLayers.LonLat(coords.lon, coords.lat) ;
+               var extLonLat = lonlat.clone().transform(EXTERNAL_PROJECTION, INTERNAL_PROJECTION) ;
+               console.log("lonlat:" + lonlat.lon ) ;
+               console.log("extLonLat" + extLonLat.lon ) ;
+               console.log(extLonLat) ;
+               coords.lon = extLonLat.lon ; 
+               coords.lat = extLonLat.lat ;
+                var id = records.saveAnnotationWithCoords(
+                   currentGeofenceAnnotation,
+                   coords);
 
-
+           var gfparams = {"fid": id, "radius": $('#geofence-form-radius').val(), "latitude": position.coords.latitude , "longitude": position.coords.longitude };
 // register the application to get geofencing events in the onGeofenceEvent function
 
             geofencing.addRegion(
@@ -60,24 +124,20 @@ $(document).on(
                     console.log("region added");
                  },
                  function(e) {
-                     alert(e);
+                     console.log("error occurred adding geofence region") ;
                   }, gfparams);
 
-           // Earthy
-           var gfparams2 = {"fid": 4, "radius": 100, "latitude": 55.934136 , "longitude": -3.178222};
+                $.mobile.changePage('map.html');
+
+            };  
+
+       var onError = function(error) {
+ 	        console.log("GPS Timeout" + error) ;
+                $.mobile.changePage('map.html');
+       };  
 
 
-            geofencing.addRegion(
-                function() {
-                    console.log("region added");
-                 },
-                 function(e) {
-                     alert(e);
-                  }, gfparams2);
+$(document).on('pageinit','#geofence-page', geofencePage) ;
 
-
-
-	  });
-})
-
+}); // ends define scope
 
