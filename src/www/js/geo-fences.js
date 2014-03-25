@@ -138,6 +138,39 @@ var currentGeofenceAnnotation ;
 
 
 $(document).on('pageinit','#geofence-page', geofencePage) ;
+	  });
+
+    // example annotate listener
+    $(document).on('click', '.annotate-image-form', function(){
+        localStorage.setItem('annotate-form-type', 'image');
+        $.mobile.changePage('annotate.html', {transition: "fade"});
+    });
+
+    // TODO
+    // this is here temporarily to test map switching
+    require(['map', 'utils'], function(map, utils){
+        $(document).on('change', '#settings-mapserver-url', function(){
+            if(utils.isMobileDevice()){
+                var url = "http://a.tiles.mapbox.com/v3/" +
+                    $('#settings-mapserver-url option:selected').val() +
+                    "/${z}/${x}/${y}.png";
+                var baseLayer = new OpenLayers.Layer.XYZ(
+                    "Map Box Layer",
+                    [url], {
+                        sphericalMercator: true,
+                        wrapDateLine: true,
+                        numZoomLevels: 17
+                    }
+                );
+
+                map.switchBaseLayer(baseLayer);
+            }
+            else{
+                utils.inform("Switching doesn't work on the desktop.");
+            }
+        });
+    });
+})
 
 }); // ends define scope
 
