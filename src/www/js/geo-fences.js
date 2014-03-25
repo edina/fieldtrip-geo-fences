@@ -136,18 +136,14 @@ var currentGeofenceAnnotation ;
                 $.mobile.changePage('map.html');
        };  
 
-
-$(document).on('pageinit','#geofence-page', geofencePage) ;
-	  });
-
+	  
     // example annotate listener
     $(document).on('click', '.annotate-image-form', function(){
         localStorage.setItem('annotate-form-type', 'image');
         $.mobile.changePage('annotate.html', {transition: "fade"});
     });
 
-    // TODO
-    // this is here temporarily to test map switching
+    // TODO this is here temporarily to test map switching
     require(['map', 'utils'], function(map, utils){
         $(document).on('change', '#settings-mapserver-url', function(){
             if(utils.isMobileDevice()){
@@ -169,8 +165,9 @@ $(document).on('pageinit','#geofence-page', geofencePage) ;
                 utils.inform("Switching doesn't work on the desktop.");
             }
         });
-    });
-})
+    }); //ends require
 
+
+$(document).on('pageinit','#geofence-page', geofencePage) ;
 }); // ends define scope
 
