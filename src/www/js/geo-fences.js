@@ -34,7 +34,10 @@ DAMAGE.
 define(['records', 'utils', 'map', 'ui'], function(records, utils, map, ui){
 
 var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
-geofencing.register(params);
+
+    if(typeof(geofencing) !== 'undefined'){
+        geofencing.register(params);
+    }
 
 var currentGeofenceAnnotation ;
 
@@ -43,7 +46,7 @@ var currentGeofenceAnnotation ;
      // listen on geofence activate  button
 
       $('#geofence-form-ok').click($.proxy(function(event){
-            
+
  	    console.log("geofence activate button listener") ;
             $('#geofence-form').submit();
         }, this));
@@ -64,13 +67,13 @@ var currentGeofenceAnnotation ;
                 {
 		   enableHighAccuracy:true,
                    maximumAge:0,
-                   timeout:5000 	
+                   timeout:5000
                 }) ;
              }
             return false ;
 
           }) // ends #geo-fence-form submit
-   
+
     }//ends geofencePage
 
 
@@ -79,12 +82,12 @@ var currentGeofenceAnnotation ;
  	        console.log("geofence getCurrentPosition:" + position.coords) ;
                   console.log("longitude:" + position.coords.longitude ) ;
                   console.log("latitude:" + position.coords.latitude ) ;
-                 
+
                  var coords = {
                        'lon': position.coords.longitude,
                        'lat': position.coords.latitude
                  } ;
-          
+
 
 
                  currentGeofenceAnnotation = {
@@ -108,14 +111,14 @@ var currentGeofenceAnnotation ;
                 };
 
                var EXTERNAL_PROJECTION = new OpenLayers.Projection("EPSG:4326") ;
-               var INTERNAL_PROJECTION = new OpenLayers.Projection("EPSG:900913") ; 
+               var INTERNAL_PROJECTION = new OpenLayers.Projection("EPSG:900913") ;
                 // map.pointToExternal(coords) ;
                var lonlat = new OpenLayers.LonLat(coords.lon, coords.lat) ;
                var extLonLat = lonlat.clone().transform(EXTERNAL_PROJECTION, INTERNAL_PROJECTION) ;
                console.log("lonlat:" + lonlat.lon ) ;
                console.log("extLonLat" + extLonLat.lon ) ;
                console.log(extLonLat) ;
-               coords.lon = extLonLat.lon ; 
+               coords.lon = extLonLat.lon ;
                coords.lat = extLonLat.lat ;
                 var id = records.saveAnnotationWithCoords(
                    currentGeofenceAnnotation,
@@ -134,14 +137,14 @@ var currentGeofenceAnnotation ;
 
                 $.mobile.changePage('gps-capture.html');
 
-            };  
+            };
 
        var onError = function(error) {
  	        console.log("GPS Timeout" + error) ;
                 $.mobile.changePage('gps-capture.html');
-       };  
+       };
 
-	  
+
     // example annotate listener
     $(document).on('click', '.annotate-image-form', function(){
         localStorage.setItem('annotate-form-type', 'image');
