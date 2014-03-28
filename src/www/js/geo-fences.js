@@ -163,7 +163,7 @@ var currentGeofenceAnnotation ;
                     [url], {
                         sphericalMercator: true,
                         wrapDateLine: true,
-                        numZoomLevels: 17
+                        numZoomLevels: 20
                     }
                 );
 
