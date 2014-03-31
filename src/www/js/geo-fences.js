@@ -143,13 +143,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                 $.mobile.changePage('gps-capture.html');
        };
 
-
-    // example annotate listener
-    $(document).on('click', '.annotate-image-form', function(){
-        localStorage.setItem('annotate-form-type', 'image');
-        $.mobile.changePage('annotate.html', {transition: "fade"});
-    });
-
     // map switching
     $(document).on('change', '#settings-mapserver-url', function(){
         if(utils.isMobileDevice()){
@@ -184,16 +177,59 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                 $('#gpscapture-play').removeClass('ui-disabled');
                 $('#gpscapture-confirm-popup').popup('close');
             }
-        }
+        };
+
+        var createAnnotation = function(type){
+            return {
+                "record": {
+                    'editor': type + '.edtr',
+                    'fields': [],
+                    'name': type + " " + utils.getSimpleDate()
+                },
+                "isSynced": false
+            }
+        };
+
         trackingRunning(true);
 
+        // save track
         $('#gpscapture-confirm-save').click(function(){
             $('#gpscapture-confirm-popup').popup('close');
             trackingRunning(false);
         });
 
+        // start track
         $('#gpscapture-play').click(function(e){
             $.mobile.changePage('annotate-gps.html');
+        });
+
+        // discard track
+        $('#gpscapture-confirm-discard').click(function(){
+            trackingRunning(false);
+        });
+
+        $('.photo-button').click(function(e){
+            records.takePhoto(function(media){
+                console.log(media);
+            });
+
+        });
+        $('.audio-button').click(function(e){
+            records.takeAudio(function(media){
+                console.log(media);
+            });
+
+        });
+        $('.text-button').click(function(e){
+            var currentAnnotation = createAnnotation('text');
+            map.getLocation(function(position){
+                map.pointToInternal(position);
+                records.saveAnnotationWithCoords(
+                    currentAnnotation,
+                    position
+                );
+                map.refreshRecords(currentAnnotation);
+            });
         });
     });
 
