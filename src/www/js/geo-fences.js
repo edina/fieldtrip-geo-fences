@@ -245,7 +245,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
         });
         $('.text-button').click(function(e){
-            createAnnotation('text');
+            records.annotateText();
         });
     });
 
