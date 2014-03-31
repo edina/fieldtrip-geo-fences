@@ -179,15 +179,37 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
             }
         };
 
-        var createAnnotation = function(type){
-            return {
+        var createAnnotation = function(type, val){
+            var annotation = {
                 "record": {
                     'editor': type + '.edtr',
                     'fields': [],
-                    'name': type + " " + utils.getSimpleDate()
+                    'name': type + utils.getSimpleDate()
                 },
                 "isSynced": false
             }
+
+            if(type === 'image' || type === 'audio'){
+                annotation.record.fields.push({
+                    "id": "fieldcontain-" + type + "-1",
+                    "val": val,
+                    "label": utils.capitaliseFirstLetter(type)
+                });
+            }
+
+            // get device location and convert it to mercator
+            map.getLocation(function(position){
+                map.pointToInternal(position.coords);
+
+                // save record and refresh map
+                records.saveAnnotationWithCoords(
+                    annotation,
+                    position.coords
+                );
+                console.log(annotation.record.point.lon + " : " + annotation.record.point.lat);
+                map.refreshRecords(annotation);
+                $.mobile.changePage('gps-capture.html');
+            });
         };
 
         trackingRunning(true);
@@ -211,25 +233,19 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         $('.photo-button').click(function(e){
             records.takePhoto(function(media){
                 console.log(media);
+                createAnnotation('image', media);
             });
 
         });
         $('.audio-button').click(function(e){
             records.takeAudio(function(media){
                 console.log(media);
+                createAnnotation('audio', media);
             });
 
         });
         $('.text-button').click(function(e){
-            var currentAnnotation = createAnnotation('text');
-            map.getLocation(function(position){
-                map.pointToInternal(position);
-                records.saveAnnotationWithCoords(
-                    currentAnnotation,
-                    position
-                );
-                map.refreshRecords(currentAnnotation);
-            });
+            createAnnotation('text');
         });
     });
 
