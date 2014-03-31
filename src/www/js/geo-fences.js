@@ -31,15 +31,14 @@ DAMAGE.
 
 "use strict";
 
-define(['records', 'utils', 'map', 'ui'], function(records, utils, map, ui){
-
-var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
+define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
+    var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
 
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
     }
 
-var currentGeofenceAnnotation ;
+    var currentGeofenceAnnotation ;
 
    var geofencePage = function()
    {
@@ -47,7 +46,7 @@ var currentGeofenceAnnotation ;
 
       $('#geofence-form-ok').click($.proxy(function(event){
 
- 	    console.log("geofence activate button listener") ;
+ 	    console.debug("geofence activate button listener") ;
             $('#geofence-form').submit();
         }, this));
 
@@ -60,7 +59,7 @@ var currentGeofenceAnnotation ;
             }
             else{
 
- 	        console.log("geofence form submit: getCurrentPosition") ;
+ 	        console.debug("geofence form submit: getCurrentPosition") ;
                 navigator.geolocation.getCurrentPosition(
                 onSuccess,
                 onError,
@@ -79,9 +78,9 @@ var currentGeofenceAnnotation ;
 
 
      var onSuccess = function(position){
- 	        console.log("geofence getCurrentPosition:" + position.coords) ;
-                  console.log("longitude:" + position.coords.longitude ) ;
-                  console.log("latitude:" + position.coords.latitude ) ;
+ 	        console.debug("geofence getCurrentPosition:" + position.coords) ;
+                  console.debug("longitude:" + position.coords.longitude ) ;
+                  console.debug("latitude:" + position.coords.latitude ) ;
 
                  var coords = {
                        'lon': position.coords.longitude,
@@ -115,9 +114,9 @@ var currentGeofenceAnnotation ;
                 // map.pointToExternal(coords) ;
                var lonlat = new OpenLayers.LonLat(coords.lon, coords.lat) ;
                var extLonLat = lonlat.clone().transform(EXTERNAL_PROJECTION, INTERNAL_PROJECTION) ;
-               console.log("lonlat:" + lonlat.lon ) ;
-               console.log("extLonLat" + extLonLat.lon ) ;
-               console.log(extLonLat) ;
+               console.debug("lonlat:" + lonlat.lon ) ;
+               console.debug("extLonLat" + extLonLat.lon ) ;
+               console.debug(extLonLat) ;
                coords.lon = extLonLat.lon ;
                coords.lat = extLonLat.lat ;
                 var id = records.saveAnnotationWithCoords(
@@ -129,10 +128,10 @@ var currentGeofenceAnnotation ;
 
             geofencing.addRegion(
                 function() {
-                    console.log("region added");
+                    console.debug("region added");
                  },
                  function(e) {
-                     console.log("error occurred adding geofence region") ;
+                     console.debug("error occurred adding geofence region") ;
                   }, gfparams);
 
                 $.mobile.changePage('gps-capture.html');
@@ -140,7 +139,7 @@ var currentGeofenceAnnotation ;
             };
 
        var onError = function(error) {
- 	        console.log("GPS Timeout" + error) ;
+ 	        console.debug("GPS Timeout" + error) ;
                 $.mobile.changePage('gps-capture.html');
        };
 
@@ -151,36 +150,58 @@ var currentGeofenceAnnotation ;
         $.mobile.changePage('annotate.html', {transition: "fade"});
     });
 
-    // TODO this is here temporarily to test map switching
-    require(['map', 'utils'], function(map, utils){
-        $(document).on('change', '#settings-mapserver-url', function(){
-            if(utils.isMobileDevice()){
-                var url = "http://a.tiles.mapbox.com/v3/" +
-                    $('#settings-mapserver-url option:selected').val() +
-                    "/${z}/${x}/${y}.png";
-                var baseLayer = new OpenLayers.Layer.XYZ(
-                    "Map Box Layer",
-                    [url], {
-                        sphericalMercator: true,
-                        wrapDateLine: true,
-                        numZoomLevels: 20
-                    }
-                );
+    // map switching
+    $(document).on('change', '#settings-mapserver-url', function(){
+        if(utils.isMobileDevice()){
+            var url = "http://a.tiles.mapbox.com/v3/" +
+                $('#settings-mapserver-url option:selected').val() +
+                "/${z}/${x}/${y}.png";
+            var baseLayer = new OpenLayers.Layer.XYZ(
+                "Map Box Layer",
+                [url], {
+                    sphericalMercator: true,
+                    wrapDateLine: true,
+                    numZoomLevels: 20
+                }
+            );
 
-                map.switchBaseLayer(baseLayer);
+            map.switchBaseLayer(baseLayer);
+        }
+        else{
+            utils.inform("Switching doesn't work on the desktop.");
+        }
+    });
+
+    // gps tracking
+    $(document).on('pageinit', '#gpscapture-page', function(){
+        var trackingRunning = function(running){
+            if(running){
+                $('#gpscapture-stop-button').removeClass('ui-disabled');
+                $('#gpscapture-play').addClass('ui-disabled');
             }
             else{
-                utils.inform("Switching doesn't work on the desktop.");
+                $('#gpscapture-stop-button').addClass('ui-disabled');
+                $('#gpscapture-play').removeClass('ui-disabled');
+                $('#gpscapture-confirm-popup').popup('close');
             }
-        });
-    }); //ends require
+        }
+        trackingRunning(true);
 
+        $('#gpscapture-confirm-save').click(function(){
+            $('#gpscapture-confirm-popup').popup('close');
+            trackingRunning(false);
+        });
+
+        $('#gpscapture-play').click(function(e){
+            $.mobile.changePage('annotate-gps.html');
+        });
+    });
 
 $(document).on('pageinit','#geofence-page', geofencePage) ;
 }); // ends define scope
 
      function onGeofenceEvent(event) {
-       console.log('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+       console.debug('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
         alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
      }
 
