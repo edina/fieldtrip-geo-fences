@@ -34,6 +34,10 @@ DAMAGE.
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
     var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
 
+
+    // For Spatial Memories, centre on Macrobert Arts Centre
+    map.overrideDefaultLonLat(-3.919802, 56.145737);
+
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
     }
