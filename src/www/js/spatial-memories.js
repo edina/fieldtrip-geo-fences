@@ -171,7 +171,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
     // gps tracking
     $(document).on('pageinit', '#gpscapture-page', function(){
-        var trackingRunning = function(running){
+        var setupButtons = function(running){
             if(running){
                 $('#gpscapture-stop-button').removeClass('ui-disabled');
                 $('#gpscapture-play').addClass('ui-disabled');
@@ -210,18 +210,16 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                     annotation,
                     position.coords
                 );
-                console.log(annotation.record.point.lon + " : " + annotation.record.point.lat);
+
                 map.refreshRecords(annotation);
                 $.mobile.changePage('gps-capture.html');
             });
         };
 
-        trackingRunning(true);
-
         // save track
         $('#gpscapture-confirm-save').click(function(){
             $('#gpscapture-confirm-popup').popup('close');
-            trackingRunning(false);
+            setupButtons(false);
         });
 
         // start track
@@ -231,19 +229,17 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
         // discard track
         $('#gpscapture-confirm-discard').click(function(){
-            trackingRunning(false);
+            setupButtons(false);
         });
 
         $('.photo-button').click(function(e){
             records.takePhoto(function(media){
-                console.log(media);
                 createAnnotation('image', media);
             });
 
         });
         $('.audio-button').click(function(e){
             records.takeAudio(function(media){
-                console.log(media);
                 createAnnotation('audio', media);
             });
 
@@ -251,6 +247,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         $('.text-button').click(function(e){
             records.annotateText();
         });
+
+        setupButtons(tracks.gpsTrackRunning());
     });
 
 $(document).on('pageinit','#geofence-page', geofencePage) ;
