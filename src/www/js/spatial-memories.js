@@ -33,7 +33,7 @@ DAMAGE.
 
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
     var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
-
+    var other = this;
 
     // For Spatial Memories, centre on Macrobert Arts Centre
     map.overrideDefaultLonLat(-3.919802, 56.145737);
@@ -41,8 +41,38 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
     }
+    
+    
+    var geofenceRecord =  function(record){
+    
+        var gfparams = {"fid": record.name, "radius": 20, "latitude": record.point.lat , "longitude": record.point.lon };
+        geofencing.addRegion(
+                            function() {
+                            console.debug("region added");
+                            },
+                            function(e) {
+                            console.debug("error occurred adding geofence region") ;
+                            }, gfparams);
+
+    
+    };
+
+    
+    
+    $.each(records.getSavedRecords(), function(id, annotation){
+        var record = annotation.record;
+        if(record.editor !== 'track.edtr'){
+            geofenceRecord(record);
+        }
+    });
+    
+    
+      
 
     var currentGeofenceAnnotation ;
+
+
+
 
    var geofencePage = function()
    {
@@ -203,6 +233,17 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
             // get device location and convert it to mercator
             map.getLocation(function(position){
+                          
+                var gfparams = {"fid": annotation.record.name, "radius": 20, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
+                            
+                            
+                geofencing.addRegion(function() {
+                     console.debug("region added");
+                     },
+                     function(e) {
+                     console.debug("error occurred adding geofence region") ;
+                     }, gfparams);
+
                 map.pointToInternal(position.coords);
 
                 // save record and refresh map
@@ -254,11 +295,72 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     });
 
 $(document).on('pageinit','#geofence-page', geofencePage) ;
+
 }); // ends define scope
 
-     function onGeofenceEvent(event) {
-       console.debug('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-        alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-     }
+
+
+//in global scope callback from cordova
+function onGeofenceEvent(event) {
+    require(['records'], function (records){
+    
+            var showAnnotation = function (annotation) {
+
+            $('#map-record-popup').off('popupbeforeposition');
+            $('#map-record-popup').on({
+                                      popupbeforeposition: function() {
+                                      var showRecord = function(html){
+                                      $('#map-record-popup-text').append(html).trigger('create');
+                                      };
+                                      
+                                      $('#map-record-popup h3').text(annotation.record.name);
+                                      $('#map-record-popup-text').text('');
+                                      
+                                      $.each(annotation.record.fields, function(i, entry){
+                                             var html;
+                                             var type = records.typeFromId(entry.id);
+                                             
+                                             if(type === 'image'){
+                                             html = '<img src="' + entry.val + '" width=100%"/>';
+                                             showRecord(html);
+                                             }
+                                             else if(type === 'audio'){
+                                             require(['audio'], function(audio){
+                                                     html = audio.getNode(entry.val, entry.label + ':');
+                                                     showRecord(html);
+                                                     });
+                                             }
+                                             else if(entry.id !== 'text0'){ // ignore title element
+                                             html = '<p><span>' + entry.label + '</span>: ' +
+                                             entry.val + '</p>';
+                                             showRecord(html);
+                                             }
+                                             });
+                                      }
+                                      });
+            
+            $('#map-record-popup').popup('open');
+            };
+
+
+    
+              console.log('in require');
+            var lookupRecord = function() {
+                $.each(records.getSavedRecords(), function(id, annotation){
+                    var record = annotation.record;
+                    console.log("record name " + event.fid);
+                    if(record.name === event.fid) {
+                       showAnnotation(annotation);
+                    }
+                });
+                
+            };
+            
+            
+            lookupRecord();
+    });
+    console.debug('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+    alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+}
 
 
