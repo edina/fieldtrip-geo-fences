@@ -45,6 +45,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     
     var geofenceRecord =  function(record){
     
+        map.pointToExternal(record.point);
+    
         var gfparams = {"fid": record.name, "radius": 20, "latitude": record.point.lat , "longitude": record.point.lon };
         geofencing.addRegion(
                             function() {
@@ -301,61 +303,60 @@ $(document).on('pageinit','#geofence-page', geofencePage) ;
 //in global scope callback from cordova
 function onGeofenceEvent(event) {
     require(['records'], function (records){
-    
-            var showAnnotation = function (annotation) {
 
-            $('#map-record-popup').off('popupbeforeposition');
-            $('#map-record-popup').on({
-                                      popupbeforeposition: function() {
-                                      var showRecord = function(html){
-                                      $('#map-record-popup-text').append(html).trigger('create');
-                                      };
-                                      
-                                      $('#map-record-popup h3').text(annotation.record.name);
-                                      $('#map-record-popup-text').text('');
-                                      
-                                      $.each(annotation.record.fields, function(i, entry){
-                                             var html;
-                                             var type = records.typeFromId(entry.id);
-                                             
-                                             if(type === 'image'){
-                                             html = '<img src="' + entry.val + '" width=100%"/>';
-                                             showRecord(html);
-                                             }
-                                             else if(type === 'audio'){
-                                             require(['audio'], function(audio){
-                                                     html = audio.getNode(entry.val, entry.label + ':');
-                                                     showRecord(html);
-                                                     });
-                                             }
-                                             else if(entry.id !== 'text0'){ // ignore title element
-                                             html = '<p><span>' + entry.label + '</span>: ' +
-                                             entry.val + '</p>';
-                                             showRecord(html);
-                                             }
-                                             });
-                                      }
-                                      });
-            
-            $('#map-record-popup').popup('open');
-            };
+        var showAnnotation = function (annotation) {
+
+        $('#map-record-popup').off('popupbeforeposition');
+        $('#map-record-popup').on({
+                                  popupbeforeposition: function() {
+                                  var showRecord = function(html){
+                                  $('#map-record-popup-text').append(html).trigger('create');
+                                  };
+                                  
+                                  $('#map-record-popup h3').text(annotation.record.name);
+                                  $('#map-record-popup-text').text('');
+                                  
+                                  $.each(annotation.record.fields, function(i, entry){
+                                         var html;
+                                         var type = records.typeFromId(entry.id);
+                                         
+                                         if(type === 'image'){
+                                         html = '<img src="' + entry.val + '" width=100%"/>';
+                                         showRecord(html);
+                                         }
+                                         else if(type === 'audio'){
+                                         require(['audio'], function(audio){
+                                                 html = audio.getNode(entry.val, entry.label + ':');
+                                                 showRecord(html);
+                                                 });
+                                         }
+                                         else if(entry.id !== 'text0'){ // ignore title element
+                                         html = '<p><span>' + entry.label + '</span>: ' +
+                                         entry.val + '</p>';
+                                         showRecord(html);
+                                         }
+                                         });
+                                  }
+                                  });
+
+        $('#map-record-popup').popup('open');
+        };
 
 
-    
-              console.log('in require');
-            var lookupRecord = function() {
-                $.each(records.getSavedRecords(), function(id, annotation){
-                    var record = annotation.record;
-                    console.log("record name " + event.fid);
-                    if(record.name === event.fid) {
-                       showAnnotation(annotation);
-                    }
-                });
-                
-            };
+        var lookupRecord = function() {
+            $.each(records.getSavedRecords(), function(id, annotation){
+                var record = annotation.record;
+                console.log("record name " + event.fid);
+                if(record.name === event.fid) {
+                   showAnnotation(annotation);
+                }
+            });
             
-            
+        };
+        
+        if(event.status.substring(0, 'entered'.length) === 'entered'){
             lookupRecord();
+        }
     });
     console.debug('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
     alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
