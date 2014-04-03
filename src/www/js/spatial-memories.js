@@ -41,12 +41,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
     }
-    
-    
+
+
     var geofenceRecord =  function(record){
-    
+
         map.pointToExternal(record.point);
-    
+
         var gfparams = {"fid": record.name, "radius": 20, "latitude": record.point.lat , "longitude": record.point.lon };
         geofencing.addRegion(
                             function() {
@@ -56,20 +56,20 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                             console.debug("error occurred adding geofence region") ;
                             }, gfparams);
 
-    
+
     };
 
-    
-    
+
+
     $.each(records.getSavedRecords(), function(id, annotation){
         var record = annotation.record;
         if(record.editor !== 'track.edtr'){
             geofenceRecord(record);
         }
     });
-    
-    
-      
+
+
+
 
     var currentGeofenceAnnotation ;
 
@@ -213,6 +213,11 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                 $('#gpscapture-play').removeClass('ui-disabled');
                 $('#gpscapture-confirm-popup').popup('close');
             }
+
+            // disable audio on android
+            if(!utils.isIOSApp()){
+                $('.audio-button').addClass('ui-disabled');
+            }
         };
 
         var createAnnotation = function(type, val){
@@ -235,10 +240,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
             // get device location and convert it to mercator
             map.getLocation(function(position){
-                          
+
                 var gfparams = {"fid": annotation.record.name, "radius": 20, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
-                            
-                            
+
+
                 geofencing.addRegion(function() {
                      console.debug("region added");
                      },
@@ -312,14 +317,14 @@ function onGeofenceEvent(event) {
                                   var showRecord = function(html){
                                   $('#map-record-popup-text').append(html).trigger('create');
                                   };
-                                  
+
                                   $('#map-record-popup h3').text(annotation.record.name);
                                   $('#map-record-popup-text').text('');
-                                  
+
                                   $.each(annotation.record.fields, function(i, entry){
                                          var html;
                                          var type = records.typeFromId(entry.id);
-                                         
+
                                          if(type === 'image'){
                                          html = '<img src="' + entry.val + '" width=100%"/>';
                                          showRecord(html);
@@ -351,9 +356,9 @@ function onGeofenceEvent(event) {
                    showAnnotation(annotation);
                 }
             });
-            
+
         };
-        
+
         if(event.status.substring(0, 'entered'.length) === 'entered'){
             lookupRecord();
         }
