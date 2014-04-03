@@ -188,8 +188,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         setupButtons(tracks.gpsTrackRunning());
     });
 
-$(document).on('pageinit','#geofence-page', geofencePage) ;
-
 }); // ends define scope
 
 
@@ -240,7 +238,6 @@ function onGeofenceEvent(event) {
         var lookupRecord = function() {
             $.each(records.getSavedRecords(), function(id, annotation){
                 var record = annotation.record;
-                console.log("record name " + event.fid);
                 if(record.name === event.fid) {
                    showAnnotation(annotation);
                 }
