@@ -234,6 +234,11 @@ function onGeofenceEvent(event) {
                                   });
 
         $('#map-record-popup').popup('open');
+        // Close popup on click
+        $('#map-record-popup').on('click',  function() {
+            popup.popup('close');
+        });
+
         };
 
 
