@@ -32,6 +32,8 @@ DAMAGE.
 "use strict";
 
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
+
+    var GEOFENCE_RADIUS_METERS = 20;
     var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
     var other = this;
 
@@ -46,8 +48,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     var geofenceRecord =  function(record){
 
         map.pointToExternal(record.point);
-
-        var gfparams = {"fid": record.name, "radius": 20, "latitude": record.point.lat , "longitude": record.point.lon };
+    
+        var gfparams = {"fid": record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": record.point.lat , "longitude": record.point.lon };
         geofencing.addRegion(
                             function() {
                             console.debug("region added");
@@ -129,10 +131,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
             // get device location and convert it to mercator
             map.getLocation(function(position){
-
-                var gfparams = {"fid": annotation.record.name, "radius": 20, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
-
-
+                          
+                var gfparams = {"fid": annotation.record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
+                            
+                            
                 geofencing.addRegion(function() {
                      console.debug("region added");
                      },
