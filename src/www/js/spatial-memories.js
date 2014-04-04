@@ -31,6 +31,8 @@ DAMAGE.
 
 "use strict";
 
+var geofencing;
+
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
 
 
@@ -69,6 +71,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
+    } else {
+        //create a null object to work on desktop
+       geofencing = { addRegion: function(){} };
+    
     }
 
 
@@ -208,6 +214,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
                 $.mobile.changePage('gps-capture.html');
             });
         };
+        
+  
 
         // save track
         $('#gpscapture-confirm-save').click(function(){
@@ -246,6 +254,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
         setupButtons(tracks.gpsTrackRunning());
     });
+    
 
 
 
@@ -335,7 +344,7 @@ function onGeofenceEvent(event) {
         }
     });
     console.debug('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
-    alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
+    //alert('region event id: ' + event.fid + ' got event with status: ' + event.status) ;
 }
 
 
