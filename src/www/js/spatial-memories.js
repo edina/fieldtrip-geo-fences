@@ -172,10 +172,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         });
 
         $('.photo-button').click(function(e){
-            records.takePhoto(function(media){
-                createAnnotation('image', media);
+            // Use the custom camera plugin
+            navigator.CustomCamera.getPicture(function(imagePath){
+                createAnnotation('image', imagePath);
+            }, function(){
+                alert("Photo cancelled");
             });
-
         });
         $('.audio-button').click(function(e){
             records.takeAudio(function(media){
