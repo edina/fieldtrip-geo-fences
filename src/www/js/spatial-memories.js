@@ -97,22 +97,17 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     // gps tracking
     $(document).on('pageinit', '#gpscapture-page', function(){
 
+/*
     map.addRecordClickListener(function(feature){
-     alert("sm recordClickListner type:" + feature.attributes.type + " id:" + feature.attributes.id ) ;
+     utils.inform("sm recordClickListner type:" + feature.attributes.type + " id:" + feature.attributes.id ) ;
 
      if(feature.attributes.type === 'track'){
         
-        alert("track") ;
-
      }
-
-
     });
+*/
 
-
-       alert("sm pageinit gps-capture-page") ;
         var setupButtons = function(running){
-            alert("sm setup buttons") ;
             if(running){
                 $('#gpscapture-stop-button').removeClass('ui-disabled');
                 $('#gpscapture-play').addClass('ui-disabled');
@@ -181,7 +176,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
         // start track
         $('#gpscapture-play').click(function(e){
-            alert("sm: #gpscapture-play") ;
             $.mobile.changePage('annotate-gps.html');
         });
 
