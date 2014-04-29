@@ -41,8 +41,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
      * track id.
      */
     $(document).on("newTextCreated", function (evt) {
-
-        var annotation = records.getSavedRecord(evt.id);
+        var annotationId = evt.id;
+        var annotation = records.getSavedRecord(annotationId);
         var trackId = 'defaultTrackId';
         if (tracks.currentTrack !== undefined) {
             trackId = tracks.currentTrack.id;
