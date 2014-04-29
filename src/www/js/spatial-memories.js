@@ -33,6 +33,26 @@ DAMAGE.
 
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
 
+
+    /**
+     * newTextCreated
+     * Listen for when a text annotation has been saved.
+     * We can then resave the same record with the current
+     * track id.
+     */
+    $(document).on("newTextCreated", function (evt) {
+
+        var annotation = records.getSavedRecord(evt.id);
+        var trackId = 'defaultTrackId';
+        if (tracks.currentTrack !== undefined) {
+            trackId = tracks.currentTrack.id;
+        }
+        annotation['trackId'] = trackId;
+        // resave annotation with trackId
+        records.saveAnnotation(annotationId, annotation);
+    });
+
+
     var GEOFENCE_RADIUS_METERS = 20;
     var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
     var other = this;
@@ -43,6 +63,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     if(typeof(geofencing) !== 'undefined'){
         geofencing.register(params);
     }
+
 
 
     var geofenceRecord =  function(record){
@@ -125,7 +146,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         };
 
         var createAnnotation = function(type, val){
-            var trackId;
+            var trackId = 'defaultTrackId';
             // Get the track id and add to annotation
             if (tracks.currentTrack !== undefined) {
                trackId = tracks.currentTrack.id;
