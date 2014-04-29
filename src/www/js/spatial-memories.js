@@ -34,6 +34,13 @@ DAMAGE.
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], function(records, utils, map, ui, tracks){
 
 
+
+    /**
+     * hack alert - remove sync buttons that interfere with list/grid view
+     */
+    $(document).on('pageinit', '#saved-records-page', function(){
+        $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
+    });
     /**
      * newTextCreated
      * Listen for when a text annotation has been saved.
