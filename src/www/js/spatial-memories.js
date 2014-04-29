@@ -125,13 +125,19 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         };
 
         var createAnnotation = function(type, val){
+            var trackId;
+            // Get the track id and add to annotation
+            if (tracks.currentTrack !== undefined) {
+               trackId = tracks.currentTrack.id;
+            }
             var annotation = {
                 "record": {
                     'editor': type + '.edtr',
                     'fields': [],
                     'name': type + utils.getSimpleDate()
                 },
-                "isSynced": false
+                "isSynced": false,
+                "trackId": trackId
             }
 
             if(type === 'image' || type === 'audio'){
@@ -185,6 +191,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         });
 
         $('.photo-button').click(function(e){
+    
             // Use the custom camera plugin
             navigator.CustomCamera.getPicture(function(imagePath){
                 createAnnotation('image', imagePath);
