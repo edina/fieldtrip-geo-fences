@@ -143,6 +143,13 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
             if(!utils.isIOSApp()){
                 $('.audio-button').addClass('ui-disabled');
             }
+
+            // Disable ability to add annotations if no track is started
+            if (tracks.currentTrack === undefined) {
+                $('.audio-button').addClass('ui-disabled');
+                $('.photo-button').addClass('ui-disabled');
+                $('.text-button').addClass('ui-disabled');
+            }
         };
 
         var createAnnotation = function(type, val){
