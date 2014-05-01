@@ -76,10 +76,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
     var geofenceRecord =  function(record){
 
         map.pointToExternal(record.point);
-    
+
         var gfparams = {"fid": record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": record.point.lat , "longitude": record.point.lon };
     if(typeof(geofencing) !== 'undefined'){
-    
+
             geofencing.addRegion(
                             function() {
                             console.debug("region added");
@@ -130,7 +130,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
      utils.inform("sm recordClickListner type:" + feature.attributes.type + " id:" + feature.attributes.id ) ;
 
      if(feature.attributes.type === 'track'){
-        
+
      }
     });
 */
@@ -185,10 +185,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
 
             // get device location and convert it to mercator
             map.getLocation(function(position){
-                          
+
                 var gfparams = {"fid": annotation.record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
-                            
-                            
+
+
                 geofencing.addRegion(function() {
                      console.debug("region added");
                      },
@@ -226,7 +226,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks'], functi
         });
 
         $('.photo-button').click(function(e){
-    
+
             // Use the custom camera plugin
             navigator.CustomCamera.getPicture(function(imagePath){
                 createAnnotation('image', imagePath);
@@ -300,6 +300,25 @@ function onGeofenceEvent(event) {
 
         };
 
+        /**
+         * checkPopups
+         * If an annotation has been stored in sessionStorage
+         * with key annotationPopup, the appropriate popup
+         * will be shown automatically
+         */
+        var checkPopups = function() {
+            var a = sessionStorage.getItem('annotationPopup');
+            if (a !== 'undefined') {
+                var annotation = $.parseJSON(a);
+                if (annotation) {
+                    map.createPopup(annotation);
+                    $('#map-record-popup').popup('open');
+                }
+                // Clean up
+                sessionStorage.removeItem('annotationPopup');
+            }
+        };
+        $(document).on('pageshow', '#gpscapture-page', checkPopups);
 
         var lookupRecord = function() {
             $.each(records.getSavedRecords(), function(id, annotation){
