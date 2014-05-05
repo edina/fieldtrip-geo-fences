@@ -38,11 +38,9 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
 
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
-        console.log('saved records tracks page this is a test');
 
         $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
         var annotations = records.getSavedRecords();
-
 
         var addAnnotation = function(id, annotation){
             var template = _.template(recrowtemplate);
@@ -100,9 +98,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 
             // Need to delete/add tracks/annotations as appropriate
             if(isAnnotations){
-                console.log('Display annotations');
-                
-                //TODO: Filter by id if specific track selected.  Check sessionStorage
                 var trackId = sessionStorage.getItem('trackId');
                 // finished with this so remove now
                 sessionStorage.removeItem('trackId');
@@ -116,7 +111,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                
              
             }else{
-                console.log('Display tracks');
                 var tracks = records.getSavedTracks();
                 addAnnotationsToList(tracks);
                 console.log(tracks);
@@ -179,205 +173,22 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 
                 if(isTrack){
                     console.log('Track has been clicked - got to annotation list screen for now');
+                    // Add to session storage
                     sessionStorage.setItem('trackId', id);
-
-                    // Display grid of annotations associated with track
-                    var trackAnnotations = records.getSavedRecordsForTrack(id);
-
-                    // Clear default view
-                   // $('#saved-records-list-list').empty();
-
-                    addAnnotationsToList(trackAnnotations);
 
                     toggleDisplay('records-annotations');
                     
                 }else{
-                    console.log('an annotation has been clicked - go to map');
+                    // Go to map page
                     map.showRecordsLayer(annotation);
                     utils.gotoMapPage();
                 }
-                
-               
-
-       
             }
         );
 
         $('#saved-annotations-list-list').listview('refresh');
-
     });
 
-
-
-    $(document).on('pageshow', '#saved-tracks-records-page', function(){
-        console.log('saved records tracks page this is a test');
-
-        $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
-        var annotations = records.getSavedRecords();
-
-
-        var addAnnotation = function(id, annotation){
-            var template = _.template(recrowtemplate);
-
-            $('#saved-records-list-list').append(
-                template({
-                    "id": id,
-                    "annotation": annotation,
-                    "fields": annotation.record.fields,
-                    "records": records
-                })
-            ).trigger('create');
-        }
-
-        
-        function addAnnotationsToList(annotations) {
-              $.each(annotations , $.proxy(function(id, annotation){
-                if(annotation){
-                    addAnnotation(id, annotation);
-                }
-                else{
-                    // empty entry, just delete it
-                    delete annotations[id];
-                    this.records.setSavedAnnotations(annotations);
-                }
-
-            }, this));
-        }
-
-
-        /**
-         * toggleDisplay
-         * takes an id (either records-tracks or records-annotations),
-         * adds to local storage and toggles tracks/records button and
-         * track list or annotation grid layout style
-         */
-        function toggleDisplay(id) {
-            // store preference so it persists
-            localStorage.setItem('records-layout', id);
-
-            // Get the button and ensure it's active
-            var button  = $('#' + id);
-            button.toggleClass('ui-btn-active', true);
-
-            // Remove active class from any other buttons
-            $.each(button.siblings('a'), function (key, value) {
-                $(value).toggleClass('ui-btn-active', false);
-            });
-
-            var isAnnotations = id === 'records-annotations';
-           
-             
-            // Clear default view
-            $('#saved-records-list-list').empty();
-                
-            // Need to delete/add tracks/annotations as appropriate
-            if(isAnnotations){
-                console.log('Display annotations');
-                
-                //TODO: Filter by id if specific track selected.  Check sessionStorage
-                var trackId = sessionStorage.getItem('trackId');
-                // finished with this so remove now
-                sessionStorage.removeItem('trackId');
-                var annotationsToDisplay;
-                if(trackId != null){
-                    annotationsToDisplay = records.getSavedRecordsForTrack(trackId);
-                }else{
-                    annotationsToDisplay = records.getSavedRecordsExcludingTracks();
-                }
-                addAnnotationsToList(annotationsToDisplay);
-               
-             
-            }else{
-                console.log('Display tracks');
-                var tracks = records.getSavedTracks();
-                addAnnotationsToList(tracks);
-                console.log(tracks);
-            }
-            $('#saved-tracks-records-page .ui-listview li').toggleClass('active', isAnnotations);
-            $('.record-extra').toggle(isAnnotations);
-            $('#saved-annotations-list-list').listview('refresh');
-            
-        };
-
-        // Toggle Annotations/Tracks Layout on button click
-        $('#layout-toggle a').on('click', function (e) {
-            toggleDisplay($(e.currentTarget).attr('id'));
-        });
-
-        // Annotations loaded at this point so we can setup layout
-        // Check if preference previously set in local storage
-        toggleDisplay(localStorage.getItem('records-layout'));
-
-        // delete a saved record
-        $(document).off('click', '.saved-records-delete');
-        $(document).on(
-            'click',
-            '.saved-records-delete',
-            $.proxy(function(event){
-                this.toBeDeleted = $(event.target).parents('li');
-
-                // open dialog for confirmation
-                $('#saved-records-delete-popup-name').text(
-                    "'" + this.toBeDeleted.find('.saved-record-view a').text() + "'");
-                $('#saved-records-delete-popup').popup('open');
-            }, this)
-        );
-
-        // delete confirm
-        $('#saved-record-delete-confirm').click($.proxy(function(event){
-            var id = $(this.toBeDeleted).attr('id');
-            records.deleteAnnotation(id, true);
-            map.refreshRecords();
-            $('#saved-records-delete-popup').popup('close');
-            this.toBeDeleted.slideUp('slow');
-        }, this));
-
-     
-
-        // click on a record
-        $(document).off('click', '.saved-records-view');
-        $(document).on(
-            'click',
-            '.saved-records-view',
-            function(event){
-                if(this.isMobileApp){
-                    // this will prevent the event propagating to next screen
-                    event.stopImmediatePropagation();
-                }
-
-                var id = $(event.target).parents('li').attr('id');
-                var annotation = records.getSavedRecord(id);
-                var isTrack = records.isTrack(annotation);
-                
-                if(isTrack){
-                    console.log('Track has been clicked - got to annotation list screen for now');
-                    sessionStorage.setItem('trackId', id);
-
-                    // Display grid of annotations associated with track
-                    var trackAnnotations = records.getSavedRecordsForTrack(id);
-
-                    // Clear default view
-                   // $('#saved-records-list-list').empty();
-
-                    addAnnotationsToList(trackAnnotations);
-
-                    toggleDisplay('records-annotations');
-                    
-                }else{
-                    console.log('an annotation has been clicked - go to map');
-                    map.showRecordsLayer(annotation);
-                    utils.gotoMapPage();
-                }
-                
-               
-
-       
-            }
-        );
-
-        $('#saved-annotations-list-list').listview('refresh');
-
-    });
     /**
      * hack alert - remove sync buttons that interfere with list/grid view
      */
