@@ -40,6 +40,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
 
         $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
+
         var annotations = records.getSavedRecords();
 
         var addAnnotation = function(id, annotation){
@@ -113,10 +114,11 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             }else{
                 var tracks = records.getSavedTracks();
                 addAnnotationsToList(tracks);
-                console.log(tracks);
             }
             $('#saved-tracks-records-page .ui-listview li').toggleClass('active', isAnnotations);
             $('.record-extra').toggle(isAnnotations);
+            $('p.ellipsis').removeClass('ellipsis');
+
             $('#saved-annotations-list-list').listview('refresh');
             
         };
@@ -177,6 +179,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                     sessionStorage.setItem('trackId', id);
 
                     toggleDisplay('records-annotations');
+                    // map.showRecordsLayer(annotation);
+                    // utils.gotoMapPage()
                     
                 }else{
                     // Go to map page
@@ -185,8 +189,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 }
             }
         );
-
-        $('#saved-annotations-list-list').listview('refresh');
+      
     });
 
     /**
