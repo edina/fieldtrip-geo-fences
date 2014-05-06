@@ -283,15 +283,23 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
     // gps tracking
     $(document).on('pageinit', '#gpscapture-page', function(){
 
-/*
+
     map.addRecordClickListener(function(feature){
-     utils.inform("sm recordClickListner type:" + feature.attributes.type + " id:" + feature.attributes.id ) ;
 
      if(feature.attributes.type === 'track'){
 
+        // TODO check trackId in session storage to see if track already open
+
+        var recordsLayer = map.getRecordsLayer() ;
+        map.removeAllFeatures(recordsLayer) ;
+        tracks.hideAllTracks() ;
+        map.showTrackRecords() ;
+        map.showRecordsForTrack(feature.attributes.id) ;
+        tracks.displayTrack(feature.attributes.id) ;
+        sessionStorage.setItem('trackId', feature.attributes.id);
      }
     });
-*/
+
 
         var setupButtons = function(running){
             if(running){
