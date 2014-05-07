@@ -355,7 +355,18 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             // get device location and convert it to mercator
             map.getLocation(function(position){
 
-                var gfparams = {"fid": annotation.record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": position.coords.latitude , "longitude": position.coords.longitude };
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+                map.pointToInternal(position.coords);
+
+                // save record and refresh map
+                var geofenceId = records.saveAnnotationWithCoords(
+                    annotation,
+                    position.coords
+                );
+                
+                
+                var gfparams = {"fid": geofenceId, "radius": GEOFENCE_RADIUS_METERS, "latitude": latitude, "longitude":longitude };
 
 
                 geofencing.addRegion(function() {
@@ -364,14 +375,6 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                      function(e) {
                      console.debug("error occurred adding geofence region") ;
                      }, gfparams);
-
-                map.pointToInternal(position.coords);
-
-                // save record and refresh map
-                records.saveAnnotationWithCoords(
-                    annotation,
-                    position.coords
-                );
 
                 map.refreshRecords(annotation);
                 $.mobile.changePage('gps-capture.html');
@@ -435,7 +438,7 @@ function onGeofenceEvent(event) {
         $('#map-record-popup').on({
                                   popupbeforeposition: function() {
                                   var showRecord = function(html){
-                                  $('#map-record-popup-text').append(html).trigger('create');
+                                    $('#map-record-popup-text').append(html).trigger('create');
                                   };
 
                                   $('#map-record-popup h3').text(annotation.record.name);
@@ -495,7 +498,7 @@ function onGeofenceEvent(event) {
         var lookupRecord = function() {
             $.each(records.getSavedRecords(), function(id, annotation){
                 var record = annotation.record;
-                if(record.name === event.fid) {
+                if(record.geofenceId === event.fid) {
                    showAnnotation(annotation);
                 }
             });
