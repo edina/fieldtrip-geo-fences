@@ -211,8 +211,13 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         if (tracks.currentTrack !== undefined) {
             trackId = tracks.currentTrack.id;
         }
+        
+        
+        
         annotation['trackId'] = trackId;
         // resave annotation with trackId
+        map.pointToExternal(annotation.record.point);
+        geofenceRecord(annotationId, annotation.record.point);
         records.saveAnnotation(annotationId, annotation);
     });
 
@@ -234,12 +239,11 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
 
 
-    var geofenceRecord =  function(record){
+    var geofenceRecord =  function(geofenceId, point){
 
-        map.pointToExternal(record.point);
 
-        var gfparams = {"fid": record.name, "radius": GEOFENCE_RADIUS_METERS, "latitude": record.point.lat , "longitude": record.point.lon };
-    if(typeof(geofencing) !== 'undefined'){
+        var gfparams = {"fid": geofenceId, "radius": GEOFENCE_RADIUS_METERS, "latitude": point.lat , "longitude": point.lon };
+        if(typeof(geofencing) !== 'undefined'){
 
             geofencing.addRegion(
                             function() {
@@ -250,14 +254,15 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                             }, gfparams);
           }
 
-    };
+        };
 
 
 
     $.each(records.getSavedRecords(), function(id, annotation){
         var record = annotation.record;
         if(record.editor !== 'track.edtr'){
-            geofenceRecord(record);
+            map.pointToExternal(record.point);
+            geofenceRecord(record.geofenceId, record.point);
         }
     });
 
@@ -365,16 +370,9 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                     position.coords
                 );
                 
-                
-                var gfparams = {"fid": geofenceId, "radius": GEOFENCE_RADIUS_METERS, "latitude": latitude, "longitude":longitude };
 
-
-                geofencing.addRegion(function() {
-                     console.debug("region added");
-                     },
-                     function(e) {
-                     console.debug("error occurred adding geofence region") ;
-                     }, gfparams);
+                geofenceRecord( geofenceId, {"lat": latitude,  "lon":longitude});
+  
 
                 map.refreshRecords(annotation);
                 $.mobile.changePage('gps-capture.html');
