@@ -101,7 +101,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             if(isAnnotations){
                 var trackId = sessionStorage.getItem('trackId');
                 // finished with this so remove now
-                sessionStorage.removeItem('trackId');
+                // BB: but the map wants to remember which track open so maybe keep it after all
+                // sessionStorage.removeItem('trackId');
                 var annotationsToDisplay;
                 if(trackId != null){
                     annotationsToDisplay = records.getSavedRecordsForTrack(trackId);
@@ -292,21 +293,34 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
     $(document).on('pageinit', '#gpscapture-page', function(){
 
 
-    map.addRecordClickListener(function(feature){
+    map.addRecordClickListener( { name:'SpatialMemoriesPluginTrackListener', callback:function(feature){
+         // TODO sometimes fires twice (or multiple times) 
+         if(feature.attributes.type === 'track'){
 
-     if(feature.attributes.type === 'track'){
+            //  check trackId in session storage to see if track already open
+            var trackId = sessionStorage.getItem('trackId') ;            
+            if(feature.attributes.id === trackId) // click on current open track 
+            {
+               var recordsLayer = map.getRecordsLayer() ;
+               map.removeAllFeatures(recordsLayer) ;
+               tracks.hideAllTracks() ;
+               map.showTrackRecords() ; 
+               sessionStorage.removeItem('trackId'); // no track open now
+            }
+            else
+            {
+               var recordsLayer = map.getRecordsLayer() ;
+               map.removeAllFeatures(recordsLayer) ;
+               tracks.hideAllTracks() ;
+               map.showRecordsForTrack(feature.attributes.id) ;
+               map.showTrackRecords() ; // add track records after other records so track icons at top
+               tracks.displayTrack(feature.attributes.id) ;
+               sessionStorage.setItem('trackId', feature.attributes.id);
+            }
+               return true ; // prevents track pop up
 
-        // TODO check trackId in session storage to see if track already open
-
-        var recordsLayer = map.getRecordsLayer() ;
-        map.removeAllFeatures(recordsLayer) ;
-        tracks.hideAllTracks() ;
-        map.showTrackRecords() ;
-        map.showRecordsForTrack(feature.attributes.id) ;
-        tracks.displayTrack(feature.attributes.id) ;
-        sessionStorage.setItem('trackId', feature.attributes.id);
      }
-    });
+    }});
 
 
         var setupButtons = function(running){
