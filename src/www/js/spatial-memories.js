@@ -453,7 +453,8 @@ function onGeofenceEvent(event) {
                                     $('#map-record-popup-text').append(html).trigger('create');
                                   };
 
-                                  $('#map-record-popup h3').text(annotation.record.name);
+                                  $('#map-record-popup h1').text(annotation.record.name);
+                                  sessionStorage.setItem('toBeDeleted',records.getAnnotationIdFromSavedRecords(annotation));
                                   $('#map-record-popup-text').text('');
 
                                   $.each(annotation.record.fields, function(i, entry){
@@ -461,14 +462,14 @@ function onGeofenceEvent(event) {
                                          var type = records.typeFromId(entry.id);
 
                                          if(type === 'image'){
-                                         html = '<img src="' + entry.val + '" width=100%"/>';
-                                         showRecord(html);
+                                             html = '<img src="' + entry.val + '" alt='+annotation.record.name+'"/>';
+                                             showRecord(html);
                                          }
                                          else if(type === 'audio'){
-                                         require(['audio'], function(audio){
+                                             require(['audio'], function(audio){
                                                  html = audio.getNode(entry.val, entry.label + ':');
                                                  showRecord(html);
-                                                 });
+                                             });
                                          }
                                          else if(entry.id !== 'text0'){ // ignore title element
                                          html = '<p><span>' + entry.label + '</span>: ' +
