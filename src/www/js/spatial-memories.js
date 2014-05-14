@@ -442,12 +442,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
 //in global scope callback from cordova
 function onGeofenceEvent(event) {
-    require(['records'], function (records){
+    require(['records', 'map'], function (records, map){
 
         var showAnnotation = function (annotation) {
-
-        $('#map-record-popup').off('popupbeforeposition');
-        $('#map-record-popup').on({
+            var popup =  $('#map-record-popup');
+        popup.off('popupbeforeposition');
+        popup.on({
                                   popupbeforeposition: function() {
                                   var showRecord = function(html){
                                     $('#map-record-popup-text').append(html).trigger('create');
@@ -480,11 +480,37 @@ function onGeofenceEvent(event) {
                                   }
                                   });
 
-        $('#map-record-popup').popup('open');
+        popup.popup('open');
         // Close popup on click
-        $('#map-record-popup').on('click',  function() {
-            $('#map-record-popup').popup('close');
+        $('#close-popup').on('click',  function() {
+            popup.popup('close');
         });
+        // delete a saved record
+        $(document).off('click', '.saved-records-delete');
+        $(document).on(
+            'click',
+            '.saved-records-delete',
+            $.proxy(function(event){
+                
+                //Close existing popup and open delete confirmation
+                popup.popup('close');
+                popup.on( "popupafterclose", function( event, ui ) {                  
+                     $('#saved-records-delete-popup').popup('open');
+                });
+               
+            }, this)
+        );
+
+        // delete confirm
+        $('#saved-record-delete-confirm').click($.proxy(function(event){
+           
+            var id = sessionStorage.getItem('toBeDeleted');
+            sessionStorage.removeItem('toBeDeleted');
+            records.deleteAnnotation(id, true);
+            map.refreshRecords();
+            $('#saved-records-delete-popup').popup('close');
+
+        }, this));
 
         };
 
