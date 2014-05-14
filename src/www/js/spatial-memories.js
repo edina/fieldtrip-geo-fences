@@ -514,26 +514,6 @@ function onGeofenceEvent(event) {
 
         };
 
-        /**
-         * checkPopups
-         * If an annotation has been stored in sessionStorage
-         * with key annotationPopup, the appropriate popup
-         * will be shown automatically
-         */
-        var checkPopups = function() {
-            var a = sessionStorage.getItem('annotationPopup');
-            if (a !== 'undefined') {
-                var annotation = $.parseJSON(a);
-                if (annotation) {
-                    map.createPopup(annotation);
-                    $('#map-record-popup').popup('open');
-                }
-                // Clean up
-                sessionStorage.removeItem('annotationPopup');
-            }
-        };
-        $(document).on('pageshow', '#gpscapture-page', checkPopups);
-
         var lookupRecord = function() {
             $.each(records.getSavedRecords(), function(id, annotation){
                 var record = annotation.record;
