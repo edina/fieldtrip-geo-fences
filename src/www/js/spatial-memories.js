@@ -36,7 +36,7 @@ var geofencing;
 define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'underscore', 'text!templates/saved-records-list-template.html' ],
         function(records, utils, map, ui, tracks, _, recrowtemplate){
 
-
+    console.log('test map ' + map);
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
 
         $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
@@ -217,8 +217,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         
         annotation['trackId'] = trackId;
         // resave annotation with trackId
-        map.pointToExternal(annotation.record.point);
-        geofenceRecord(annotationId, annotation.record.point);
+        
+        var clonedPoint = {};
+        clonedPoint.lat = annotation.record.point.lat;
+        clonedPoint.lon = annotation.record.point.lon;
+        map.pointToExternal(clonedPoint);
+        geofenceRecord(annotationId, clonedPoint);
         records.saveAnnotation(annotationId, annotation);
     });
 
@@ -442,7 +446,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
 //in global scope callback from cordova
 function onGeofenceEvent(event) {
-    require(['records'], function (records){
+    require(['records', 'map'], function (records, map){
 
         var showAnnotation = function (annotation) {
 
@@ -487,7 +491,7 @@ function onGeofenceEvent(event) {
         });
 
         };
-
+ 
         /**
          * checkPopups
          * If an annotation has been stored in sessionStorage
