@@ -160,10 +160,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
      
 
         // click on a record
-        $(document).off('click', '.saved-records-view');
+        $(document).off('click', '.saved-records-view, .record-extra');
         $(document).on(
             'click',
-            '.saved-records-view',
+            '.saved-records-view, .record-extra',
             function(event){
                 if(this.isMobileApp){
                     // this will prevent the event propagating to next screen
