@@ -297,6 +297,32 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
     $(document).on('pageinit', '#gpscapture-page', function(){
 
 
+
+    /**
+     * checkPopups
+     * If an annotation has been stored in sessionStorage
+     * with key annotationPopup, the appropriate popup
+     * will be shown automatically
+     *
+     */
+    var checkPopups = function() {
+
+        var a = sessionStorage.getItem('annotationPopup');
+        if (a !== 'undefined') {
+
+            var annotation = $.parseJSON(a);
+
+            if (annotation) {
+                map.createPopup(annotation);
+                $('#map-record-popup').popup('open');
+            }
+
+            // Clean up
+            sessionStorage.removeItem('annotationPopup');
+        }
+    };
+
+
     map.addRecordClickListener( { name:'SpatialMemoriesPluginTrackListener', callback:function(feature){
          // TODO sometimes fires twice (or multiple times) 
          if(feature.attributes.type === 'track'){
