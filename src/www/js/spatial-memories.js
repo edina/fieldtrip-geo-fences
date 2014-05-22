@@ -322,6 +322,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         }
     };
 
+    map.registerTileLoad(this) ;
+        
 
     map.addRecordClickListener( { name:'SpatialMemoriesPluginTrackListener', callback:function(feature){
          // TODO sometimes fires twice (or multiple times) 
@@ -374,6 +376,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('.audio-button').addClass('ui-disabled');
                 $('.photo-button').addClass('ui-disabled');
                 $('.text-button').addClass('ui-disabled');
+                $('.audio-button').disabled = true ;
+                
             }
         };
 
