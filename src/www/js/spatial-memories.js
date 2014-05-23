@@ -400,6 +400,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('.photo-button').attr('aria-label', "Open Camera to make a picture memory. Button remains disabled if not started recording track") ;
                
          
+                $('.text-button').attr('href', "javascript: void(0)") ;
                 $('.text-button').attr('disabled', true) ;
                 $('.text-button').attr('aria-disabled', true) ;
                 $('.text-button').attr('aria-label', "Open Text editor to make a text memory. Button remains disabled if not started recording track") ;
