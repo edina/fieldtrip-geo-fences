@@ -358,11 +358,25 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         var setupButtons = function(running){
             if(running){
                 $('#gpscapture-stop-button').removeClass('ui-disabled');
+                $('#gpscapture-stop-button').attr('disabled', false) ;
+                $('#gpscapture-stop-button').attr('aria-disabled', false) ;
+                
                 $('#gpscapture-play').addClass('ui-disabled');
+                $('#gpscapture-play').attr('disabled', true) ;
+                $('#gpscapture-play').attr('aria-disabled', true) ;
+                
+                $('#gpscapture-stop-button').focus();
             }
             else{
                 $('#gpscapture-stop-button').addClass('ui-disabled');
+                $('#gpscapture-stop-button').attr('disabled', true) ;
+                $('#gpscapture-stop-button').attr('aria-disabled', true) ;
+                
+                
                 $('#gpscapture-play').removeClass('ui-disabled');
+                $('#gpscapture-play').attr('disabled', false) ;
+                $('#gpscapture-play').attr('aria-disabled', false) ;
+                
                 $('#gpscapture-confirm-popup').popup('close');
             }
 
@@ -376,7 +390,20 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('.audio-button').addClass('ui-disabled');
                 $('.photo-button').addClass('ui-disabled');
                 $('.text-button').addClass('ui-disabled');
-                $('.audio-button').disabled = true ;
+            
+                $('.audio-button').attr('disabled', true) ;
+                $('.audio-button').attr('aria-disabled', true) ;
+                $('.audio-button').attr('aria-label', "Open Audio recorder to make a sound memory. Button remains disabled if not started recording track") ;
+                
+                $('.photo-button').attr('disabled', true) ;
+                $('.photo-button').attr('aria-disabled', true) ;
+                $('.photo-button').attr('aria-label', "Open Camera to make a picture memory. Button remains disabled if not started recording track") ;
+               
+         
+                $('.text-button').attr('disabled', true) ;
+                $('.text-button').attr('aria-disabled', true) ;
+                $('.text-button').attr('aria-label', "Open Text editor to make a text memory. Button remains disabled if not started recording track") ;
+                         
                 
             }
         };
