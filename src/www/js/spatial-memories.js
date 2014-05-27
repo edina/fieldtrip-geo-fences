@@ -378,6 +378,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('#gpscapture-play').attr('aria-disabled', false) ;
                 
                 $('#gpscapture-confirm-popup').popup('close');
+                $('#gpscapture-play').focus();
+                   
             }
 
             // disable audio on android
@@ -404,6 +406,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('.text-button').attr('disabled', true) ;
                 $('.text-button').attr('aria-disabled', true) ;
                 $('.text-button').attr('aria-label', "Open Text editor to make a text memory. Button remains disabled if not started recording track") ;
+                $('#gpscapture-play').focus();
                          
                 
             }
@@ -493,6 +496,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         });
 
         setupButtons(tracks.gpsTrackRunning());
+        console.debug("finished set up buttons") ;
+        
     });
     
 
