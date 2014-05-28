@@ -331,7 +331,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
             //  check trackId in session storage to see if track already open
             var trackId = sessionStorage.getItem('trackId') ;            
-            if(feature.attributes.id === trackId) // click on current open track 
+            if(trackId !== null && feature.attributes.id === trackId) // click on current open track 
             {
                var recordsLayer = map.getRecordsLayer() ;
                map.removeAllFeatures(recordsLayer) ;
@@ -346,7 +346,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                tracks.hideAllTracks() ;
                map.showRecordsForTrack(feature.attributes.id) ;
                map.showTrackRecords() ; // add track records after other records so track icons at top
-               tracks.displayTrack(feature.attributes.id) ;
+               tracks.displayTrack(feature.attributes.id) ; // TODO why is track nopt showingi 
                sessionStorage.setItem('trackId', feature.attributes.id);
             }
                return true ; // prevents track pop up
