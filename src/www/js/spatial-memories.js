@@ -187,6 +187,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                     // Go to map page
                     map.showRecordsLayer(annotation);
                     utils.gotoMapPage();
+            
+
+                    if (annotation) {
+                        map.createPopup(annotation);
+                    $('#map-record-popup').popup('open');
+            }
                 }
             }
         );
@@ -360,10 +366,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('#gpscapture-stop-button').removeClass('ui-disabled');
                 $('#gpscapture-stop-button').attr('disabled', false) ;
                 $('#gpscapture-stop-button').attr('aria-disabled', false) ;
+                $('#gpscapture-stop-button').attr('aria-label', "Stop recording current track") ;
                 
                 $('#gpscapture-play').addClass('ui-disabled');
                 $('#gpscapture-play').attr('disabled', true) ;
                 $('#gpscapture-play').attr('aria-disabled', true) ;
+                $('#gpscapture-play').attr('aria-label', "Start recording a new track. Remains inactive while current track is still recording") ;
                 
                 $('#gpscapture-stop-button').focus();
             }
@@ -371,11 +379,14 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 $('#gpscapture-stop-button').addClass('ui-disabled');
                 $('#gpscapture-stop-button').attr('disabled', true) ;
                 $('#gpscapture-stop-button').attr('aria-disabled', true) ;
+                $('#gpscapture-stop-button').attr('aria-label', "Stop recording current track. Remains inactive until a new track is started") ;
                 
                 
                 $('#gpscapture-play').removeClass('ui-disabled');
                 $('#gpscapture-play').attr('disabled', false) ;
                 $('#gpscapture-play').attr('aria-disabled', false) ;
+                $('#gpscapture-play').attr('aria-label', "Start recording a new memory track") ;
+               
                 
                 $('#gpscapture-confirm-popup').popup('close');
                 $('#gpscapture-play').focus();
@@ -497,6 +508,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
         setupButtons(tracks.gpsTrackRunning());
         console.debug("finished set up buttons") ;
+        
         
     });
     
