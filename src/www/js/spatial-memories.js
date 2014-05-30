@@ -187,16 +187,15 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                     // Go to map page
                     map.showRecordsLayer(annotation);
                     utils.gotoMapPage();
+                    // checkPopups() ;
             
-
-                    if (annotation) {
-                        map.createPopup(annotation);
-                    $('#map-record-popup').popup('open');
-            }
                 }
             }
         );
-      
+        
+   
+    
+    
     });
 
     /**
@@ -299,6 +298,42 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         }
     });
 
+   
+    $(document).on('pageshow', '#gpscapture-page', function(){
+      
+      /**
+     * checkPopups
+     * If an annotation has been stored in sessionStorage
+     * with key annotationPopup, the appropriate popup
+     * will be shown automatically
+     *
+     */
+    var checkPopups = function() {
+
+        var a = sessionStorage.getItem('annotationPopup');
+        if (a !== 'undefined') {
+
+            var annotation = $.parseJSON(a);
+
+            if (annotation) {
+                map.createPopup(annotation);
+                $('#map-record-popup').popup('open');
+            }
+
+            // Clean up
+            sessionStorage.removeItem('annotationPopup');
+        }
+    };
+      
+      checkPopups() ;
+      map.addAltTags() ;
+      
+      //TODO alttags
+      
+            
+    });
+    
+   
     // gps tracking
     $(document).on('pageinit', '#gpscapture-page', function(){
 
@@ -510,7 +545,9 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         console.debug("finished set up buttons") ;
         
         
-    });
+       
+        
+    });  //ends  pageinit
     
 
 
