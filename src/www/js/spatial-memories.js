@@ -118,8 +118,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             }
             $('#saved-tracks-records-page .ui-listview li').toggleClass('active', isAnnotations);
             $('.record-extra').toggle(isAnnotations);
-            $('p.ellipsis').removeClass('ellipsis');
-
+            // Add background colour to text annotations
+            $('.description').parents('div.ui-grid-b').toggleClass('description', isAnnotations);
             $('#saved-annotations-list-list').listview('refresh');
             
         };
