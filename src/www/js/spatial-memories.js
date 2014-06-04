@@ -220,6 +220,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         
         
         
+        annotation.record.trackId = trackId;
         annotation['trackId'] = trackId;
         // resave annotation with trackId
         
@@ -468,7 +469,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 "record": {
                     'editor': type + '.edtr',
                     'fields': [],
-                    'name': type + utils.getSimpleDate()
+                    'name': type + utils.getSimpleDate(),
+                    "trackId": trackId
                 },
                 "isSynced": false,
                 "trackId": trackId
