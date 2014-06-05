@@ -218,11 +218,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             trackId = tracks.currentTrack.id;
         }
         
-        
-        
-        annotation.record.trackId = trackId;
-        annotation['trackId'] = trackId;
         // resave annotation with trackId
+        annotation.record.trackId = trackId;
         
         var clonedPoint = {};
         clonedPoint.lat = annotation.record.point.lat;
@@ -472,8 +469,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                     'name': type + utils.getSimpleDate(),
                     "trackId": trackId
                 },
-                "isSynced": false,
-                "trackId": trackId
+                "isSynced": false
             }
 
             if(type === 'image' || type === 'audio'){
