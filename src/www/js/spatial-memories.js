@@ -151,6 +151,11 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         // delete confirm
         $('#saved-record-delete-confirm').click($.proxy(function(event){
             var id = $(this.toBeDeleted).attr('id');
+            
+            // If this is a track, stop gpscapture
+            if(records.isTrack(records.getSavedRecord(id))){
+                tracks.gpsCaptureComplete();
+            }
             records.deleteAnnotation(id, true);
             map.refreshRecords();
             $('#saved-records-delete-popup').popup('close');
