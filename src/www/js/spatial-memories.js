@@ -151,6 +151,11 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         // delete confirm
         $('#saved-record-delete-confirm').click($.proxy(function(event){
             var id = $(this.toBeDeleted).attr('id');
+            
+            // If this is a track, stop gpscapture
+            if(records.isTrack(records.getSavedRecord(id))){
+                tracks.gpsCaptureComplete();
+            }
             records.deleteAnnotation(id, true);
             map.refreshRecords();
             $('#saved-records-delete-popup').popup('close');
@@ -218,10 +223,8 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             trackId = tracks.currentTrack.id;
         }
         
-        
-        
-        annotation['trackId'] = trackId;
         // resave annotation with trackId
+        annotation.record.trackId = trackId;
         
         var clonedPoint = {};
         clonedPoint.lat = annotation.record.point.lat;
@@ -468,10 +471,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 "record": {
                     'editor': type + '.edtr',
                     'fields': [],
-                    'name': type + utils.getSimpleDate()
+                    'name': type + utils.getSimpleDate(),
+                    "trackId": trackId
                 },
-                "isSynced": false,
-                "trackId": trackId
+                "isSynced": false
             }
 
             if(type === 'image' || type === 'audio'){
