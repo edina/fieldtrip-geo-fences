@@ -328,7 +328,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
       checkPopups() ;
       map.addAltTags() ;
       
-      //TODO alttags
+      
       
             
     });
