@@ -490,12 +490,14 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
 
                 var latitude = position.coords.latitude;
                 var longitude = position.coords.longitude;
-                map.pointToInternal(position.coords);
+                var internalCoords = map.pointToInternal(position.coords);
+                internalCoords.lat = internalCoords.latitude;
+                internalCoords.lon = internalCoords.longitude;
 
                 // save record and refresh map
                 var geofenceId = records.saveAnnotationWithCoords(
                     annotation,
-                    position.coords
+                    internalCoords
                 );
                 
 
