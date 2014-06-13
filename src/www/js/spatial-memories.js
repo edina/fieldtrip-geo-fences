@@ -100,14 +100,20 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             // Need to delete/add tracks/annotations as appropriate
             if(isAnnotations){
                 var trackId = sessionStorage.getItem('trackId');
+           
                 // finished with this so remove now
                 // BB: but the map wants to remember which track open so maybe keep it after all
                 // sessionStorage.removeItem('trackId');
                 var annotationsToDisplay;
+                 
                 if(trackId != null){
                     annotationsToDisplay = records.getSavedRecordsForTrack(trackId);
+                    // Add track name to page header
+                    $('#saved-tracks-records-page .ui-title').text(records.getSavedRecord(trackId).record.name);
+                    
                 }else{
                     annotationsToDisplay = records.getSavedRecordsExcludingTracks();
+                    
                 }
                 addAnnotationsToList(annotationsToDisplay);
                
@@ -115,7 +121,10 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
             }else{
                 var tracks = records.getSavedTracks();
                 addAnnotationsToList(tracks);
+                // Ensure page header is reset
+                $('#saved-tracks-records-page .ui-title').text('Spatial Memories');
             }
+            
             $('#saved-tracks-records-page .ui-listview li').toggleClass('active', isAnnotations);
             $('.record-extra').toggle(isAnnotations);
             // Add background colour to text annotations
