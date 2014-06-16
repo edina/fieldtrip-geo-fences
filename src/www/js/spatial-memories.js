@@ -33,8 +33,8 @@ DAMAGE.
 
 var geofencing;
 
-define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'underscore', 'text!templates/saved-records-list-template.html' ],
-        function(records, utils, map, ui, tracks, _, recrowtemplate){
+define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'underscore', 'text!templates/saved-records-list-template.html' ],
+        function(settings, records, utils, map, ui, tracks, _, recrowtemplate){
 
 
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
@@ -469,6 +469,13 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 
             }
         };
+       
+        /**
+         * Should photo be saved to gallery 
+         */
+        var savePhotoToGallery = function(){
+            return (settings.get('save-photo-to-gallery') === 'Yes').toString();
+        };
 
         var createAnnotation = function(type, val){
             var trackId = 'defaultTrackId';
@@ -537,13 +544,12 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
         });
 
         $('.photo-button').click(function(e){
-
             // Use the custom camera plugin
             navigator.CustomCamera.getPicture(function(imagePath){
                 createAnnotation('image', imagePath);
             }, function(){
                 alert("Photo cancelled");
-            }, 'True');
+            }, savePhotoToGallery());
         });
         $('.audio-button').click(function(e){
             records.takeAudio(function(media){
