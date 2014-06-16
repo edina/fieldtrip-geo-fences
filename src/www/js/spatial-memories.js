@@ -543,7 +543,7 @@ define(['records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'unders
                 createAnnotation('image', imagePath);
             }, function(){
                 alert("Photo cancelled");
-            });
+            }, 'True');
         });
         $('.audio-button').click(function(e){
             records.takeAudio(function(media){
