@@ -33,8 +33,8 @@ DAMAGE.
 
 var geofencing;
 
-define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'underscore', 'text!templates/saved-records-list-template.html' ],
-        function(settings, records, utils, map, ui, tracks, _, recrowtemplate){
+define(['settings','records', 'utils', 'map', 'ui', '../../gps-tracking/js/tracks', 'underscore', 'text!templates/saved-records-list-template.html', 'audio' ],
+        function(settings, records, utils, map, ui, tracks, _, recrowtemplate, audio){
 
 
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
@@ -580,10 +580,45 @@ define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/trac
         $('.text-button').click(function(e){
             records.annotateText();
         });
-
-        setupButtons(tracks.gpsTrackRunning());
-        console.debug("finished set up buttons") ;
         
+       
+        
+        console.log('attached event to increase-vol-button');
+        
+        //make sure the event handler is attached only once.
+        $(document).off('click',
+                   '#increase-vol-button');
+        
+        $(document).on('click',
+                   '#increase-vol-button',
+                    function(e){
+                        audio.increaseVolume();
+                    });
+                   
+        $(document).off('click',
+                   '#decrease-vol-button');
+        
+        $(document).on('click',
+                   '#decrease-vol-button',
+                    function(e){
+                        audio.decreaseVolume();
+                    });
+                   
+        $(document).off('click',
+                   '#annotate-audio-button');
+        
+        $(document).on('click',
+                   '#annotate-audio-button',
+                    function(e){
+                        audio.playAudio();
+                    });
+        
+        
+        
+        
+        setupButtons(tracks.gpsTrackRunning());
+        console.log("finished set up buttons") ;
+          
         
        
         
