@@ -43,10 +43,7 @@ define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/trac
 
         var annotations = records.getSavedRecords();
 
-        var addAnnotation = function(id, annotation){
-            var template = _.template(recrowtemplate);
-
-            // If the record is a track, we want to get the description as we are displaying this rather than the name
+        var getTrackDescription = function(annotation){
             var trackDescription = '';
             if(records.isTrack(annotation)){
                 var fields = annotation.record.fields !== undefined;
@@ -59,13 +56,18 @@ define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/trac
                     }); 
                 }
             }
+            return trackDescription;
+        }
+
+        var addAnnotation = function(id, annotation){
+            var template = _.template(recrowtemplate);
             $('#saved-records-list-list').append(
                 template({
                     "id": id,
                     "annotation": annotation,
                     "fields": annotation.record.fields,
                     "records": records,
-                    "trackDescription": trackDescription
+                    "trackDescription": getTrackDescription(annotation)
                 })
             ).trigger('create');
         }
@@ -125,7 +127,7 @@ define(['settings', 'records', 'utils', 'map', 'ui', '../../gps-tracking/js/trac
                     // Add track name to page header
                     var track = records.getSavedRecord(trackId);
                     if(track !== undefined){
-                        $('#saved-tracks-records-page .ui-title').text(track.record.name);
+                        $('#saved-tracks-records-page .ui-title').text(getTrackDescription(track));
                     }
                     
                     
