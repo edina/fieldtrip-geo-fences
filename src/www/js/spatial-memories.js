@@ -37,6 +37,14 @@ define(['settings','records', 'utils', 'map', 'ui', '../../gps-tracking/js/track
         function(settings, records, utils, map, ui, tracks, _, recrowtemplate, audio){
 
 
+    $(document).on('pageshow', '#settings-page', function(){
+        $("#theme-select").on( "change", function(event) {
+            // Construct path to css with theme name selected
+            $('link#jqm-stylesheet').attr('href', 'theme/css/themes/'+ $(event.target).val() +'/jqm-style.css');
+        });
+    });
+
+
     $(document).on('pageshow', '#saved-tracks-records-page', function(){
 
         $('.ui-block-c.ui-header-buttons.ui-btn-right').remove();
