@@ -38,7 +38,7 @@ define(['settings','records', 'utils', 'map', 'ui', '../../gps-tracking/js/track
 
 
     $(document).on('pageshow', '#settings-page', function(){
-        $("#theme-select").on( "change", function(event) {
+        $("#settings-theme-select").on( "change", function(event) {
             // Construct path to css with theme name selected
             $('link#jqm-stylesheet').attr('href', 'theme/css/themes/'+ $(event.target).val() +'/jqm-style.css');
         });
