@@ -273,7 +273,7 @@ define(['settings','records', 'utils', 'map', 'ui', '../../gps-tracking/js/track
 
 
     var GEOFENCE_RADIUS_METERS = 20;
-    var params = { callback: 'onGeofenceEvent', notifyMessage: '%2$s your home!' };
+    var params = { callback: 'onGeofenceEvent' };
     var other = this;
 
     // For Spatial Memories, centre on Macrobert Arts Centre
@@ -641,6 +641,7 @@ define(['settings','records', 'utils', 'map', 'ui', '../../gps-tracking/js/track
 
 //in global scope callback from cordova
 function onGeofenceEvent(event) {
+    
     require(['records', 'map'], function (records, map){
 
         var showAnnotation = function (annotation) {
@@ -712,12 +713,23 @@ function onGeofenceEvent(event) {
         }, this));
 
         };
+        
+        //go to map page
 
         var lookupRecord = function() {
             $.each(records.getSavedRecords(), function(id, annotation){
+                
                 var record = annotation.record;
                 if(record.geofenceId === event.fid) {
-                   showAnnotation(annotation);
+                   //if on map page just show
+                    var activePage = $.mobile.activePage.attr("id");
+                    
+                    if(activePage === 'gpscapture-page'){
+                        showAnnotation(annotation);
+                    } else {
+                        sessionStorage.setItem('annotationPopup', JSON.stringify(annotation));
+                        $.mobile.changePage('gps-capture.html');
+                    }
                 }
             });
 
